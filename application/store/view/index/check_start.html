@@ -1,0 +1,4 @@
+<li><label>当前咨询室待开始</label></li>
+<li><label><i class="fa fa-user"></i> 咨询师：{$counselor.name}</label></li>
+<li><label><i class="fa fa-user-circle" style="font-size: 12px"></i> 来访者：{$order.name}</label></li>
+<li><input type="button" value="开始咨询" class="submitBtn" onclick="check_start('{$order.id}')"/><input type="button" value="签出" class="submitBtn" onclick="check_out('{$order.id}')"/></li>

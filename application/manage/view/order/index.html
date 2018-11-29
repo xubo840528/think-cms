@@ -1,0 +1,286 @@
+{extend name="common/base" }
+{block name="style"}
+<style type="text/css">
+    .box-body>.table{color: #000000;}
+    .box-body>.table tr{border-bottom: 6px solid #ffffff;}
+</style>
+{/block}
+{block name="content-body"}
+<div class="box">
+    <div class="box-header with-border">
+        <form class="nd-search-form" action="{$action_list.search}">
+            <div class="col-sm-4 nd-search-item">
+                <!--<a class="btn btn-primary action-add" href="{:url('add')}"><i class="fa fa-plus"></i> 新增</a>-->
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$dateRangeHtml}
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$counselorHtml}
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$statusHtml}
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$keyword_html}
+            </div>
+        </form>
+    </div>
+    <div class="box-body table-responsive">
+        <table id="menu-tree" class="table table-hover">
+            <thead>
+            <tr>
+                <th>老师</th>
+                <th>档期</th>
+                <th>用户</th>
+                <th>店名</th>
+                <th>单价/H</th>
+                <th>开始</th>
+                <th>结束</th>
+                <th>时长</th>
+                <th>应收</th>
+                <th>套餐</th>
+                <th>抵扣</th>
+                <th>剩余</th>
+                <th>结算</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr {if $vo.state == 1} class="bg-green" {/if}{if $vo.state == 4} class="bg-gray" {/if}>
+                <td>{$vo.counselor}({$vo.counselor_orders})</td>
+                <td>{$vo.schedule|substr=5,8}</td>
+                <td>{$vo.name}({$vo.customer_orders})</td>
+                <td>{$vo.store}</td>
+                <td>￥{$vo.price/100}</td>
+                <td>{$vo.start_time=='1970-01-01 08:00:01'?'--:--:--':substr($vo.start_time,10)}</td>
+                <td>{$vo.end_time=='1970-01-01 08:00:01'?'--:--:--':substr($vo.end_time,10)}</td>
+                <td>{$vo.minutes}’</td>
+                <td>￥{$vo.receivable/100}</td>
+                <td>{$vo.deducted+$vo.balance}’</td>
+                <td>{$vo.deducted}’</td>
+                <td>{$vo.balance}’</td>
+                <td>￥{$vo.retainage/100}</td>
+                <td>{:$vo.status}</td>
+                <td>
+                    <div class="nd-action" data-id="{$vo.id}" data-title="订单">
+                        {if $vo.state == 0||$vo.state == 1}
+                        <a class="text-danger action-edit"><i class="fa fa-trash-o"></i> 取消</a>
+                        | <a class="text-danger action-edit_price"><i class="fa fa-jpy"></i> 改价</a>
+                        {elseif  $vo.state == 2/}
+                        <a class="text-danger action-edit_receive"><i class="fa fa-jpy"></i> 收款</a>
+                        {elseif  $vo.state == 5/}
+                        {if !$vo.amount}
+                        <a class="text-danger action-invoice"><i class="fa fa-ticket"></i> 开票</a>
+                        {/if}
+                        {/if}
+                    </div>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+    {if condition="$page"}
+    <div class="box-footer">
+        {:$page}
+    </div>
+    {/if}
+</div>
+<div class="modal fade" id="modal-edit"></div>
+<script type="text/x-template" id="modal-edit-template">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">选择类型</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <input type="hidden" name="id" v-model="form.id"/>
+                    <div class="form-group">
+                        <label>老师</label>
+                        <input type="text" name="counselor" v-model="form.counselor" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>客户</label>
+                        <input type="text" name="name" v-model="form.name" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>类型</label>
+                        <div>
+                            <div class="pretty p-default p-round p-smooth">
+                                <input type="radio" v-model="form.type" name="type" value="1"/>
+                                <div class="state p-primary">
+                                    <label>客户取消</label>
+                                </div>
+                            </div>
+                            <div class="pretty p-default p-round p-smooth">
+                                <input type="radio" v-model="form.type" name="type" value="2"/>
+                                <div class="state p-primary">
+                                    <label>老师取消</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><i
+                        class="fa fa-remove"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" @click="saveRecord"><i class="fa fa-save"></i> 确定</button>
+            </div>
+        </div>
+    </div>
+</script>
+<div class="modal fade" id="modal-edit-price"></div>
+<script type="text/x-template" id="modal-edit-price-template">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">填写修改价格</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <input type="hidden" name="id" v-model="form.id"/>
+                    <div class="form-group">
+                        <label>老师</label>
+                        <input type="text" name="counselor" v-model="form.counselor" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>客户</label>
+                        <input type="text" name="name" v-model="form.name" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>原价</label>
+                        <input type="text" name="price" v-model="form.price" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>修改价</label>
+                        <input type="text" name="new_price" v-model="form.new_price" class="form-control"/>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><i
+                        class="fa fa-remove"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" @click="saveRecord"><i class="fa fa-save"></i> 确定</button>
+            </div>
+        </div>
+    </div>
+</script>
+<div class="modal fade" id="modal-edit-receive"></div>
+<script type="text/x-template" id="modal-edit-receive-template">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">订单收款</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <input type="hidden" name="id" v-model="form.id"/>
+                    <div class="form-group">
+                        <label>咨询时间</label>
+                        <p></p>
+                        <input type="text" name="consult_time" v-model="form.consult_time" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>有效时长(分钟)</label>
+                        <input type="text" name="minutes" v-model="form.minutes" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>套餐抵扣(分钟)</label>
+                        <input type="text" name="deducted" v-model="form.deducted" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>结算时长(分钟)</label>
+                        <input type="text" name="settle_minutes" v-model="form.settle_minutes" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>咨询单价(元/小时)</label>
+                        <input type="text" name="price" v-model="form.price" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>结算费用(元)</label>
+                        <input type="text" name="retainage" v-model="form.retainage" class="form-control" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label>POS交易单号</label>
+                        <input type="text" name="tradeno" v-model="form.tradeno" placeholder="请填写POS交易单号" class="form-control"/>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><i
+                        class="fa fa-remove"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" @click="saveRecord"><i class="fa fa-save"></i> 确定</button>
+            </div>
+        </div>
+    </div>
+</script>
+{/block}
+{block name="script"}
+<script>
+    var actionList = JSON.parse('{:$action_list_json}');
+
+
+    $(function () {
+
+        $(document).on('click', '.action-add', function () {
+            CMS.app.recordAdd(actionList.add, {
+                deleted: 0
+            });
+        });
+
+        $(document).on('click', '.action-edit', function () {
+            var id = $(this).parent().attr('data-id');
+            CMS.app.recordEdit(actionList.edit, id);
+        });
+        $(document).on('click', '.action-edit_price', function () {
+            var id = $(this).parent().attr('data-id');
+            CMS.app.recordEdit(actionList.edit_price, id,'#modal-edit-price');
+        });
+        $(document).on('click', '.action-edit_receive', function () {
+            var id = $(this).parent().attr('data-id');
+            CMS.app.recordEdit(actionList.edit_receive, id,'#modal-edit-receive');
+        });
+        $(document).on('click', '.action-delete', function () {
+            var id = $(this).parent().attr('data-id'),
+                dataTitle = $(this).parent().attr('data-title');
+            CMS.app.recordDelete(actionList.delete, id, dataTitle);
+        });
+        $(".action-invoice").click(function () {
+            if(confirm('是否确认开票？')){
+                var id = $(this).parent().attr('data-id');
+                $.ajax({
+                    type: 'post',
+                    url: "{:url('ajaxInvoice')}",
+                    data: {id: id},
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.status==1){
+                            alert('开票成功');
+                            location.href = location.href;
+                        }
+                    }
+                });
+            }
+        })
+    });
+</script>
+{/block}

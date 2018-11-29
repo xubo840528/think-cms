@@ -1,0 +1,10 @@
+<li><label>当前咨询已结束</label></li>
+<!--<li><label><i class="fa fa-user"></i> 咨询师：{$counselor.name}</label></li>-->
+<!--<li><label><i class="fa fa-user-circle" style="font-size: 12px"></i> 来访者：{$order.name}</label></li>-->
+<li><label><i class="fa fa-calendar" style="font-size: 12px"></i> 咨询时间：{$order.start_time|substr=5,11} - {$order.end_time|substr=11,5}</label></li>
+<li><label><i class="fa fa-calculator" style="font-size: 12px"></i> 有效时长：{$order.minutes}'</label></li>
+<li><label><i class="fa fa-calculator" style="font-size: 12px"></i> 套餐抵扣：{$order.deducted}'</label></li>
+<li><label><i class="fa fa-calculator" style="font-size: 12px"></i> 结算时长：{$order.minutes-$order.deducted}'</label></li>
+<li><label><i class="fa fa-jpy"></i>  咨询单价：￥{$order.price/100}/小时</label></li>
+<li><label><i class="fa fa-jpy"></i>  结算费用：￥{$order.retainage/100}</label></li>
+<li><input type="text" name="tradeno" placeholder="请输入POS交易单号" style="margin-right: 10px;width: 60%;height: 30px;"><input type="button" value="立即收款" class="submitBtn" onclick="check_pay('{$order.id}')"/></li>

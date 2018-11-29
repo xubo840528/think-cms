@@ -1,0 +1,196 @@
+{extend name="common/base" }
+
+{block name="content-body"}
+<div class="box">
+    <div class="box-header with-border">
+        <form class="nd-search-form" action="{$action_list.search}">
+            <div class="col-sm-6 nd-search-item">
+                <a class="btn btn-primary action-add"><i class="fa fa-plus"></i> 新增</a>
+            </div>
+
+        </form>
+    </div>
+    <div class="box-body table-responsive">
+        <table id="menu-tree" class="table table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>类型</th>
+                <th>店名</th>
+                <th>房间数</th>
+                <th>城市</th>
+                <th>地址</th>
+                <th>电话</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr>
+                <td>{$vo.id}</td>
+                <td>{$vo.type}</td>
+                <td>{$vo.name}</td>
+                <td>{$vo.rooms}</td>
+                <td>{$vo.city}</td>
+                <td>{$vo.address}</td>
+                <td>{$vo.phone}</td>
+                <td>{:$vo.status_html}</td>
+                <td>
+                    <div class="nd-action" data-id="{$vo.id}" data-title="{$vo.name}">
+                        <a class="action-edit"><i class="fa fa-edit"></i> 编辑</a>
+                        | <a href="{:url('room',array('store_id'=>$vo.id))}"><i class="fa fa-github-square"></i> 房间</a>
+                        | <a class="text-danger action-delete"><i class="fa fa-trash-o"></i> 删除</a>
+                    </div>
+                </td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+    {if condition="$page"}
+    <div class="box-footer">
+        {:$page}
+    </div>
+    {/if}
+</div>
+
+<div class="modal fade" id="modal-add"></div>
+<script type="text/x-template" id="modal-add-template">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">添加门店</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label>类型</label>
+                        <select name="type" v-model="form.type" class="form-control nd-select2 ">
+                            <option value="1" selected>直营</option>
+                            <option value="2">共享</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>店名</label>
+                        <input type="text" name="name" v-model="form.name" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>城市</label>
+                        <input type="text" name="city" v-model="form.city" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>地址</label>
+                        <input type="text" name="address" v-model="form.address"
+                               class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>电话</label>
+                        <input type="text" name="phone" v-model="form.phone"
+                               class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>门店登录手机号</label>
+                        <input type="text" name="manager_mobile" v-model="form.manager_mobile" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>门店登录密码</label>
+                        <input type="text" name="manager_password" v-model="form.manager_password" class="form-control"/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><i
+                        class="fa fa-remove"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" @click="addRecord"><i class="fa fa-save"></i> 保存</button>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div class="modal fade" id="modal-edit"></div>
+<script type="text/x-template" id="modal-edit-template">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">编辑门店</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <input type="hidden" name="id" v-model="form.id"/>
+                    <div class="form-group">
+                        <label>类型</label>
+                        <select name="type" v-model="form.type" class="form-control nd-select2 ">
+                            <option value="1">直营</option>
+                            <option value="2">共享</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>店名</label>
+                        <input type="text" name="name" v-model="form.name" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>城市</label>
+                        <input type="text" name="city" v-model="form.city" class="form-control"
+                               placeholder="为空则不修改"/>
+                    </div>
+                    <div class="form-group">
+                        <label>地址</label>
+                        <input type="text" name="address" v-model="form.address"
+                               class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>电话</label>
+                        <input type="text" name="phone" v-model="form.phone"
+                               class="form-control"/>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><i
+                        class="fa fa-remove"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" @click="saveRecord"><i class="fa fa-save"></i> 保存</button>
+            </div>
+        </div>
+    </div>
+</script>
+
+{/block}
+
+{block name="script"}
+<script>
+    var actionList = JSON.parse('{:$action_list_json}');
+
+
+    $(function () {
+
+        $(document).on('click', '.action-add', function () {
+            CMS.app.recordAdd(actionList.add, {
+                deleted: 0
+            });
+        });
+
+        $(document).on('click', '.action-edit', function () {
+            var id = $(this).parent().attr('data-id');
+            CMS.app.recordEdit(actionList.edit, id);
+        });
+
+
+        $(document).on('click', '.action-delete', function () {
+            var id = $(this).parent().attr('data-id'),
+                dataTitle = $(this).parent().attr('data-title');
+            CMS.app.recordDelete(actionList.delete, id, dataTitle);
+        });
+
+    });
+</script>
+{/block}

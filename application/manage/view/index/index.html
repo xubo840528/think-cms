@@ -1,0 +1,20 @@
+{extend name="common/base" }
+
+{block name="content-body"}
+<div class="box">
+    <div class="box-body table-responsive">
+        <table class="table table-bordered table-hover">
+            {volist name="server_info" id="value" mod="2"}
+            <tr>
+                <td width="200px" class="text-primary">{$key}</td>
+                <td>{:$value}</td>
+            </tr>
+            {/volist}
+            <tr>
+                <td class="text-primary">扩展列表</td>
+                <td>{$extensions_list}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{/block}

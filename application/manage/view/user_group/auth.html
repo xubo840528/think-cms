@@ -1,0 +1,72 @@
+{extend name="common/base" }
+
+{block name="content-body"}
+<div class="box">
+    <div class="box-body table-responsive">
+        <table id="tree-menu" class="table table-hover">
+            <thead>
+            <tr>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="box-footer">
+        <a class="btn btn-primary action-save"><i class="fa fa-save"></i> 保存</a>
+        <a class="btn btn-default nd-back pull-right"><i class="fa fa-rotate-left"></i> 返回</a>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script>
+    var App = {
+        selector: {
+            menuTree: '#tree-menu'
+        }
+    };
+    var treeData = JSON.parse('{:$menu_tree_json}');
+    var actionList = JSON.parse('{:$action_list_json}');
+
+    // tree
+    (function (app) {
+
+        app.buildMenuTree = function (selector, treeData) {
+            $(selector).fancytree({
+                icon: false,
+                checkbox: true,
+                clickFolderMode: 4,
+                extensions: ["table"],
+                table: {
+                    nodeColumnIdx: 0
+                },
+                source: treeData,
+                createNode: function (event, data) {
+                    var item = data.node.data;
+                    $('span.fancytree-title', data.node.span).html('<i class="' + item['menu_icon'] + '"></i> ' + item['menu_name']);
+                }
+            });
+        };
+
+        app.saveGroupMenuNos = function (actionAuth, selectorTree) {
+            var menuNos = CMS.app.getTreeDataNos(selectorTree, 'menu_no');
+            var data = {
+                menu_nos: menuNos
+            };
+            CMS.ajax.request(actionAuth, data);
+        };
+
+    }(App));
+
+    $(function () {
+
+        App.buildMenuTree(App.selector.menuTree, treeData);
+
+        $(document).on('click', '.box-footer .action-save', function () {
+            App.saveGroupMenuNos(actionList.auth, App.selector.menuTree);
+        });
+
+    });
+</script>
+{/block}

@@ -1,0 +1,154 @@
+{extend name="common/base" }
+{block name="style"}
+<style type="text/css">
+    .bg-green{background-color: #5fbb5a !important}
+    .bg-blue{background-color: #62bae8 !important}
+</style>
+{/block}
+{block name="content-body"}
+<div class="box">
+    <div class="box-header with-border">
+        <form class="nd-search-form" action="{$action_list.search}">
+            <div class="col-sm-4 nd-search-item">
+                <span class="bg-green margin">已开启</span><span class="bg-yellow margin">已预约</span><span class="bg-gray margin">已满房</span>
+                <!--<a class="btn btn-primary action-add" href="{:url('add')}"><i class="fa fa-plus"></i> 新增</a>-->
+            </div>
+
+            <div class="col-sm-2 nd-search-item">
+                {:$storeHtml}
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$counselorHtml}
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$dateRangeHtml}
+            </div>
+            <div class="col-sm-2 nd-search-item">
+                {:$keyword_html}
+            </div>
+        </form>
+    </div>
+    <div class="box-body table-responsive">
+        <table id="menu-tree" class="table table-hover">
+            <thead>
+            <tr>
+                <th>日期</th>
+                <th>星期</th>
+                <th colspan="14" style="text-align: center;">档期</th>
+            </tr>
+            </thead>
+            <tbody>
+            {if count($list)}
+            {volist name="list" id="vo"}
+            <tr {if $vo.week=='周日'}style="color:#fff;background-color: #e86261"{/if}>
+            <td>{$vo.date}</td>
+            <td>{$vo.week}</td>
+            {volist name="vo.date_schedules" id="item"}
+            <td data-id="{$item.id}" data-state="{$item.state}" align="center" {if $item.state==1}class="action-edit bg-green" title="已开启"{elseif $item.state==2}class="action-edit bg-yellow" title="已预约"{elseif $item.state==3}class="action-edit bg-gray" title="已满房"{else}class="action-edit"{/if}>
+                {:substr($item.start_time,11,5)} - {:substr($item.end_time,11,5)}
+            </td>
+            <td></td>
+            {/volist}
+
+            </tr>
+            {/volist}
+            {else/}
+            <tr>
+                <td colspan="7">请先选择老师...</td>
+            </tr>
+            {/if}
+
+            </tbody>
+        </table>
+    </div>
+    {if condition="$page"}
+    <div class="box-footer">
+        {:$page}
+    </div>
+    {/if}
+</div>
+<div class="modal fade" id="modal-edit"></div>
+<script type="text/x-template" id="modal-edit-template">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">档期创单</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-body">
+                    <input type="hidden" name="id" v-model="form.id"/>
+                    <div class="form-group">
+                        <label>时间</label>
+                        <input type="text" name="time" v-model="form.time" disabled class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>价格</label>
+                        <input type="text" name="price" v-model="form.price" disabled class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>状态</label>
+                        <input type="text" name="status" v-model="form.status" disabled class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>手机</label>
+                        <input type="text" name="mobile" v-model="form.mobile" placeholder="输入客户手机" class="form-control"/>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><i
+                        class="fa fa-remove"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" @click="saveRecord"><i class="fa fa-plus"></i> 创单</button>
+            </div>
+        </div>
+    </div>
+</script>
+{/block}
+{block name="script"}
+<script>
+    var actionList = JSON.parse('{:$action_list_json}');
+
+
+    $(function () {
+
+        $(document).on('click', '.action-edit', function () {
+            if($(this).hasClass('bg-blue')){
+                $(".action-edit").removeClass('bg-blue');
+                $(this).removeClass('bg-blue');
+            }else{
+                $(".action-edit").removeClass('bg-blue');
+                $(this).addClass('bg-blue');
+            }
+
+            var id = $(this).attr('data-id');
+
+            CMS.app.recordEdit(actionList.edit, id);
+        });
+
+
+        $("select[name=store_id]").change(function () {
+            var store_id = $(this).val();
+            if(store_id){
+                $.ajax({
+                    type: 'post',
+                    url: "{:url('ajaxCounselorList')}",
+                    data: {store_id: store_id},
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.status==1){
+                            $("select[name=counselor_id]").html(data.html);
+                        }
+                    }
+                });
+            }else{
+                $("select[name=counselor_id]").html('<option value="" selected="">选择老师</option>')
+            }
+        });
+    });
+</script>
+{/block}

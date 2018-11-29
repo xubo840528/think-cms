@@ -1,0 +1,39 @@
+{extend name="common/base" }
+
+{block name="content-body"}
+<div class="box">
+    <div class="box-header with-border">
+        <form class="nd-search-form" action="{$action_list.search}">
+            <div class="col-sm-6 nd-search-item"></div>
+            <div class="col-sm-3 nd-search-item">
+                {:$date_rage_html}
+            </div>
+            <div class="col-sm-3 nd-search-item">
+                {:$keyword_html}
+            </div>
+        </form>
+    </div>
+    <div class="box-body table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>用户</th>
+                <th>IP</th>
+                <th class="hidden-xs">浏览器</th>
+                <th>时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="vo"}
+            <tr>
+                <td>{$vo.user_nick}</td>
+                <td>{$vo.login_ip}</td>
+                <td class="hidden-xs">{$vo.login_agent}</td>
+                <td>{$vo.create_time}</td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}

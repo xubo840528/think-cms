@@ -1,0 +1,10 @@
+{if $orders}
+{volist name="orders" id="val"}
+<li><label><input type="radio" name="order_id" value="{$val.id}" class="radio"/><i class="fa fa-user"> {$val.counselor}</i> <i class="fa fa-calendar"> {$val.start_time|substr=11,5}-{$val.end_time|substr=11,5}</i> <i class="fa fa-user-circle"> {$val.customer}</i></label></li>
+
+{/volist}
+<li><input type="button" value="签入" class="submitBtn" onclick="check_in()"/></li>
+{else/}
+<li><label>没有预约订单</label></li>
+{/if}
+

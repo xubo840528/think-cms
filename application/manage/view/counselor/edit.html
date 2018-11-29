@@ -1,0 +1,43 @@
+{extend name="common/base" }
+
+{block name="content-body"}
+<div class="box">
+    <div class="row">
+        <form  class="ajax-form" action="{:url('edit')}">
+        <div class="col-md-6">
+            <div class="box-header with-border">
+                <h3 class="box-title">编辑老师</h3>
+            </div>
+            <div class="box-body">
+                <input type="hidden" name="id" value="{$info.id}">
+                {:$select_html}
+                {:$typeHtml}
+                {:$widget->form('text', ['title' => '昵称', 'name' => 'name', 'value' => $info.name])}
+                {:$imageHtml}
+                {:$widget->form('text', ['title' => '排序', 'name' => 'sort', 'value' => $info.sort])}
+                {:$widget->form('text', ['title' => '手机', 'name' => 'mobile', 'value' => $info.mobile])}
+                {:$widget->form('text', ['title' => '密码', 'name' => 'password', 'value' => $info.password])}
+                {:$widget->form('text', ['title' => '编码', 'name' => 'num', 'value' => $info.num])}
+
+                {:$widget->form('text', ['title' => '底薪', 'name' => 'salary', 'value' => $info.salary/100])}
+                {:$widget->form('text', ['title' => '单价', 'name' => 'price', 'value' => $info.price/100])}
+                {:$widget->form('text', ['title' => '提成(%)', 'name' => 'rate', 'value' => $info.rate/100])}
+                {:$widget->form('text', ['title' => 'title', 'name' => 'title', 'value' => $info.title])}
+                {:$widget->form('text', ['title' => '擅长领域', 'name' => 'tags', 'value' => $info.tags,'placeholder'=>'逗号分隔'])}
+                {:$widget->form('textarea', ['title' => '职称', 'name' => 'info', 'value' => $info.info])}
+                {:$widget->form('textarea', ['title' => '一封信', 'name' => 'descr', 'value' => $info.descr])}
+                {:$widget->form('textarea', ['title' => '详情', 'name' => 'detail', 'value' => $info.detail])}
+                {:$widget->form('textarea', ['title' => '培训经历', 'name' => 'remark', 'value' => $info.remark])}
+
+
+
+            </div>
+            <div class="box-footer">
+                <a class="btn btn-primary ajax-post"><i class="fa fa-save"></i> 保存</a>
+                <a class="btn btn-default nd-back pull-right"><i class="fa fa-rotate-left"></i> 返回</a>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+{/block}

@@ -1,0 +1,38 @@
+{extend name="common/base" }
+
+{block name="content-body"}
+<div class="box">
+    <div class="row">
+        <form  class="ajax-form" action="{:url('add')}"  enctype="multipart/form-data">
+        <div class="col-md-6">
+            <div class="box-header with-border">
+                <h3 class="box-title">添加老师</h3>
+            </div>
+            <div class="box-body">
+                {:$select_html}
+                {:$typeHtml}
+                {:$nameHtml}
+                {:$imageHtml}
+                {:$sortHtml}
+                {:$mobileHtml}
+                {:$passwordHtml}
+                {:$numHtml}
+                {:$salaryHtml}
+                {:$priceHtml}
+                {:$rateHtml}
+                {:$titleHtml}
+                {:$tagsHtml}
+                {:$infoHtml}
+                {:$descrHtml}
+                {:$detailHtml}
+                {:$remarkHtml}
+            </div>
+            <div class="box-footer">
+                <a class="btn btn-primary ajax-post"><i class="fa fa-save"></i> 保存</a>
+                <a class="btn btn-default nd-back pull-right"><i class="fa fa-rotate-left"></i> 返回</a>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+{/block}
