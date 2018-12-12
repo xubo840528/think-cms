@@ -249,7 +249,6 @@ class Order extends Base
                         $data['commision'] = $order['receivable']/100*$order['rate']/100;
                     }
                 }
-                print_r($data);exit;
                 $return = Db::name('orders')->where('id',$id)->update($data);
 
                 $this->success('修改价格成功');
