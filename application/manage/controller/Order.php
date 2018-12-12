@@ -211,6 +211,7 @@ class Order extends Base
         switch ($action) {
             case 'get':
                 $return = Db::name('orders')->find($id);
+                $return['receivable'] = '￥'.$return['receivable']/100;
                 $return['counselor'] = Db::name('counselors')->where('id',$return['counselor_id'])->value('name');
                 $return['price'] = '￥'.$return['price']/100;
                 $this->success('','',$return);
