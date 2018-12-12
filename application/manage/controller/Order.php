@@ -220,11 +220,11 @@ class Order extends Base
                 $this->success('','',$return);
                 break;
             case 'save':
-                print_r($this->request->param());exit;
+
                 $order = Db::name('orders')->find($id);
                 $new_receivable = $this->request->param('new_receivable',0,'trim');
                 $is_commission = $this->request->param('is_commission/a');
-
+                print_r($this->request->param('new_receivable'));exit;
                 if(!$new_receivable){
                     $this->error('填写修改金额');
                 }
