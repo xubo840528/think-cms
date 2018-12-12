@@ -44,7 +44,7 @@
     </div>
     <div data-role="main" class="ui-content">
         {volist name="rooms" id="val"}
-        <div class="room" data-id="{$val.id}" data-name="{$val.name}" data-state="{$val.status}" {if $val.order_state=1}style="background-color: #00ff8a !important;"{/if}>
+        <div class="room" data-id="{$val.id}" data-name="{$val.name}" data-state="{$val.status}" {if $val.order_state==1}style="background-color: #00ff8a !important;"{/if}>
             <h2>{$val.name}</h2>
             <h3>{$val.counselor}&nbsp;</h3>
             <h3 style="color: #000000;">{$val.status}</h3>
