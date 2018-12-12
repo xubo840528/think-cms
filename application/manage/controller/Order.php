@@ -212,6 +212,9 @@ class Order extends Base
             case 'get':
                 $return = Db::name('orders')->find($id);
                 $return['receivable'] = '￥'.$return['receivable']/100;
+                $return['marketing_cost'] = '￥'.$return['marketing_cost']/100;
+                $return['retainage'] = '￥'.$return['retainage']/100;
+                $return['commision'] = '￥'.$return['commision']/100;
                 $return['counselor'] = Db::name('counselors')->where('id',$return['counselor_id'])->value('name');
                 $return['price'] = '￥'.$return['price']/100;
                 $this->success('','',$return);
