@@ -182,18 +182,12 @@
                         <input type="text" name="new_price" v-model="form.new_price" class="form-control"/>
                     </div>
                     <div class="form-group">
-                        <label>是否关联咨询师</label>
+                        <label>计算提成</label>
                         <div class="input-item">
-                            <div class="pretty p-default p-round p-thick">
-                                <input type="radio" name="delete_empty" checked value="0"/>
+                            <div class="pretty p-default">
+                                <input type="checkbox" name="isCommission" value="1"/>
                                 <div class="state p-primary">
-                                    <label>是</label>
-                                </div>
-                            </div>
-                            <div class="pretty p-default p-round p-thick">
-                                <input type="radio" name="delete_empty" value="1"/>
-                                <div class="state p-primary">
-                                    <label>否</label>
+                                    <label>是否按实收款计算提成</label>
                                 </div>
                             </div>
                         </div>

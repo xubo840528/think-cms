@@ -225,11 +225,11 @@ class Order extends Base
                 if(!$new_price){
                     $this->error('填写修改价格');
                 }
-                if($order['minutes'] == 0){ // 待咨询
-                    $data = [
-                        'price' => $new_price * 100,
-                    ];
-                }else{  //已咨询
+//                if($order['minutes'] == 0){ // 待咨询
+//                    $data = [
+//                        'price' => $new_price * 100,
+//                    ];
+//                }else{  //已咨询
                     if(!$order['deducted'] && !$order['balance'] && !$order['cash_value']){  //使用现金
                         $receivable = $retainage = floor(($new_price/60)*$order['minutes'])*100;
                         $commision = ($receivable/100)*($order['rate']/100);
@@ -252,7 +252,7 @@ class Order extends Base
                             'commision' => $commision,
                         ];
                     }
-                }
+//                }
 
                 $return = Db::name('orders')->where('id',$id)->update($data);
 
