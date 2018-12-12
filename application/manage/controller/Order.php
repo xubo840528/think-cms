@@ -221,37 +221,40 @@ class Order extends Base
                 break;
             case 'save':
                 $order = Db::name('orders')->find($id);
-                $new_price = $this->request->param('new_price',0,'trim');
-                if(!$new_price){
-                    $this->error('填写修改价格');
+                $new_receivable = $this->request->param('new_receivable',0,'trim');
+                $is_commission = $this->request->param('is_commission',0,'trim');
+                if(!$new_receivable){
+                    $this->error('填写修改金额');
+                }
+                $gap = $order['receivable']/100 - $new_receivable;
+                $marketing_cost =   ($order['marketing_cost']/100 + $gap)*100;
+                $data['marketing_cost'] = $marketing_cost;
+                $data['retainage'] = $order['receivable']-$marketing_cost;
+                if($is_commission){
+                    $data['commision'] = $data['retainage']/100*$order['rate']/100;
                 }
 //                if($order['minutes'] == 0){ // 待咨询
 //                    $data = [
 //                        'price' => $new_price * 100,
 //                    ];
 //                }else{  //已咨询
-                    if(!$order['deducted'] && !$order['balance'] && !$order['cash_value']){  //使用现金
-                        $receivable = $retainage = floor(($new_price/60)*$order['minutes'])*100;
-                        $commision = ($receivable/100)*($order['rate']/100);
-                        $data = [
-                            'price' => $new_price * 100,
-                            'receivable' => $receivable,
-                            'retainage' => $retainage,
-                            'commision' => $commision,
-                        ];
-                    }else{  //使用套餐
-                        $receivable  = floor(($new_price/60)*$order['minutes'])*100;
-                        $cash_value = floor(($receivable/100)*0.9*100);
-                        $marketing_cost = floor(($receivable/100)*0.1*100);
-                        $commision = ($receivable/100)*($order['rate']/100);
-                        $data = [
-                            'price' => $new_price * 100,
-                            'receivable' => $receivable,
-                            'cash_value' => $cash_value,
-                            'marketing_cost' => $marketing_cost,
-                            'commision' => $commision,
-                        ];
-                    }
+
+
+//                    if(!$order['deducted'] && !$order['balance'] && !$order['cash_value']){  //使用现金
+//
+//                    }else{  //使用套餐
+//                        $receivable  = floor(($new_price/60)*$order['minutes'])*100;
+//                        $cash_value = floor(($receivable/100)*0.9*100);
+//                        $marketing_cost = floor(($receivable/100)*0.1*100);
+//                        $commision = ($receivable/100)*($order['rate']/100);
+//                        $data = [
+//                            'price' => $new_price * 100,
+//                            'receivable' => $receivable,
+//                            'cash_value' => $cash_value,
+//                            'marketing_cost' => $marketing_cost,
+//                            'commision' => $commision,
+//                        ];
+//                    }
 //                }
 
                 $return = Db::name('orders')->where('id',$id)->update($data);
