@@ -220,11 +220,9 @@ class Order extends Base
                 $this->success('','',$return);
                 break;
             case 'save':
-                print_r($this->request->param('is_commission'));
                 $order = Db::name('orders')->find($id);
                 $new_receivable = $this->request->param('new_receivable',0,'trim');
                 $is_commission = $this->request->param('is_commission');
-                print_r($this->request->param());exit;
                 if(!$new_receivable){
                     $this->error('填写修改金额');
                 }
@@ -247,7 +245,7 @@ class Order extends Base
                         $data['commision'] = ($order['receivable']/100 - $gap)*$order['rate']/100;
                     }
                 }
-
+                print_r($data);exit;
                 $return = Db::name('orders')->where('id',$id)->update($data);
 
                 $this->success('修改价格成功');
