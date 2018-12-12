@@ -222,8 +222,8 @@ class Order extends Base
             case 'save':
 
                 $order = Db::name('orders')->find($id);
-                $new_receivable = $this->request->param('new_receivable',0,'trim');
-                $is_commission = $this->request->param('is_commission/d');
+                $new_receivable = $this->request->post('new_receivable',0,'trim');
+                $is_commission = $this->request->post('is_commission/a');
                 print_r($this->request->param());exit;
                 if(!$new_receivable){
                     $this->error('填写修改金额');
