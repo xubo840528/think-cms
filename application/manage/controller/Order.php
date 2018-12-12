@@ -220,7 +220,7 @@ class Order extends Base
                 $this->success('','',$return);
                 break;
             case 'save':
-
+                print_r($this->request->param('radio'));
                 $order = Db::name('orders')->find($id);
                 $new_receivable = $this->request->post('new_receivable',0,'trim');
                 $is_commission = $this->request->post('is_commission/a');
