@@ -239,14 +239,14 @@ class Order extends Base
                     if($is_commission=='true'){
                         $data['commision'] = $data['retainage']/100*$order['rate']/100;
                     }else{
-                        $data['commision'] = $data['receivable']/100*$order['rate']/100;
+                        $data['commision'] = $order['receivable']/100*$order['rate']/100;
                     }
                 }else{  //使用套餐
                     $data['marketing_cost'] = ($order['receivable']/100/10 + $gap)*100;
                     if($is_commission=='true'){
                         $data['commision'] = ($order['receivable']/100 - $gap)*$order['rate']/100;
                     }else{
-                        $data['commision'] = $data['receivable']/100*$order['rate']/100;
+                        $data['commision'] = $order['receivable']/100*$order['rate']/100;
                     }
                 }
                 print_r($data);exit;
