@@ -236,12 +236,12 @@ class Order extends Base
                 if(!$order['deducted'] && !$order['balance'] && !$order['cash_value']){  //使用现金
                     $data['marketing_cost'] = $gap*100;
                     $data['retainage'] = $order['receivable'] - $data['marketing_cost'];
-                    if($is_commission){
+                    if($is_commission=='true'){
                         $data['commision'] = $data['retainage']/100*$order['rate']/100;
                     }
                 }else{  //使用套餐
                     $data['marketing_cost'] = ($order['receivable']/100/10 + $gap)*100;
-                    if($is_commission){
+                    if($is_commission=='true'){
                         $data['commision'] = ($order['receivable']/100 - $gap)*$order['rate']/100;
                     }
                 }
