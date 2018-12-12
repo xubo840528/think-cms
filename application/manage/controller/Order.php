@@ -234,7 +234,7 @@ class Order extends Base
 
 
                 if(!$order['deducted'] && !$order['balance'] && !$order['cash_value']){  //使用现金
-                    $data['marketing_cost'] = $gap;
+                    $data['marketing_cost'] = $gap*100;
                     $data['retainage'] = $order['receivable'] - $data['marketing_cost'];
                     if($is_commission){
                         $data['commision'] = $data['retainage']/100*$order['rate']/100;
